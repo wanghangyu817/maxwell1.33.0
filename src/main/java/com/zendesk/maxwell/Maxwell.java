@@ -281,7 +281,7 @@ public class Maxwell implements Runnable {
 			LOGGER.info("Starting Maxwell. maxMemory: " + Runtime.getRuntime().maxMemory() + " bufferMemoryUsage: " + config.bufferMemoryUsage);
 
 			if ( config.haMode ) {
-				new MaxwellHA(maxwell, config.jgroupsConf, config.raftMemberID, config.clientID).startHA();
+				new MaxwellHA(maxwell, config.zookeeperServer, config.sessionTimeoutMs, config.connectionTimeoutMs, config.maxRetries, config.baseSleepTimeMs, config.clientID).startHA();
 			} else {
 				maxwell.start();
 			}

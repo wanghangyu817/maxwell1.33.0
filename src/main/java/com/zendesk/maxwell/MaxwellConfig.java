@@ -160,6 +160,11 @@ public class MaxwellConfig extends AbstractConfig {
 	public boolean haMode;
 	public String jgroupsConf;
 	public String raftMemberID;
+	public String zookeeperServer;
+	public int sessionTimeoutMs;
+	public int connectionTimeoutMs;
+	public int maxRetries;
+	public int baseSleepTimeMs;
 
 	public MaxwellConfig() { // argv is only null in tests
 		this.customProducerProperties = new Properties();
@@ -701,7 +706,19 @@ public class MaxwellConfig extends AbstractConfig {
 
 		setupEncryptionOptions(options, properties);
 
-		this.haMode = fetchBooleanOption("ha", options, properties, false);
+		//this.haMode = fetchBooleanOption("ha", options, properties, false);
+		this.haMode = fetchBooleanOption("ha_mode", options, properties, false);
+		this.zookeeperServer = fetchStringOption("zookeeper_server", options, properties, null);
+		this.sessionTimeoutMs = fetchIntegerOption("session_time_out_ms", options, properties, 6000);
+		this.connectionTimeoutMs = fetchIntegerOption("connection_time_out_ms", options, properties, 6000);
+		this.maxRetries = fetchIntegerOption("max_retries", options, properties, 3);
+		this.baseSleepTimeMs = fetchIntegerOption("base_sleep_time_ms", options, properties, 1000);
+
+		if(haMode){
+			if(null == zookeeperServer){
+				usageForOptions("null is not allowed in high availability mode: " + zookeeperServer, "--zookeeper_server");
+			}
+		}
 		this.jgroupsConf = fetchStringOption("jgroups_config", options, properties, "raft.xml");
 		this.raftMemberID = fetchStringOption("raft_member_id", options, properties, null);
 	}
